@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
 """
 2x2x2 Rubik's Cube Solver using Reinforcement Learning
 ========================================================
-Uses Autodidactic Iteration (ADI) — the same family of algorithms
-as DeepCubeA — adapted for a 2x2x2 cube with a pure-numpy neural net.
+Uses Autodidactic Iteration (ADI). The same family of algorithms
+as DeepCubeA, but adapted for a 2x2x2 cube with a pure-numpy neural net.
 
 How it works:
   1. Generate training states by scrambling from SOLVED state
@@ -12,16 +11,14 @@ How it works:
   3. Train a neural network to predict this value function
   4. At solve time, greedily pick moves that minimize predicted distance
 
-This is a form of approximate value iteration — a core RL technique.
+This is a form of approximate value iteration.
 """
 
 import numpy as np
 from collections import deque
 import time
 
-# ═══════════════════════════════════════════════════════════
 # 1. CUBE ENVIRONMENT
-# ═══════════════════════════════════════════════════════════
 
 class Cube2x2:
     """
@@ -98,9 +95,7 @@ class Cube2x2:
         return feat
 
 
-# ═══════════════════════════════════════════════════════════
 # 2. NEURAL NETWORK (Numpy)
-# ═══════════════════════════════════════════════════════════
 
 class Network:
     """
@@ -212,9 +207,7 @@ class Network:
         return val_loss, pol_loss
 
 
-# ═══════════════════════════════════════════════════════════
-# 3. TRAINING (Autodidactic Iteration)
-# ═══════════════════════════════════════════════════════════
+# 3. TRAINING (Autodidactic Iteration) 
 
 def generate_training_data(net, batch_size, max_depth, rng):
     """
@@ -270,13 +263,10 @@ def train(num_iterations=200, batch_size=256, max_depth=8, lr=5e-4, hidden=128):
     net = Network(hidden=hidden, lr=lr)
     rng = np.random.default_rng(42)
     
-    print("=" * 65)
     print("  2x2x2 RUBIK'S CUBE — RL TRAINING (Autodidactic Iteration)")
-    print("=" * 65)
     print(f"  Iterations: {num_iterations}  |  Batch size: {batch_size}")
     print(f"  Max scramble depth: {max_depth}")
     print(f"  Network: 144 -> {hidden} -> {hidden} -> value(1) + policy(6)")
-    print("=" * 65)
     
     t_start = time.time()
     
@@ -316,13 +306,10 @@ def train(num_iterations=200, batch_size=256, max_depth=8, lr=5e-4, hidden=128):
     
     total_time = time.time() - t_start
     print(f"\n  Training complete in {total_time:.1f}s")
-    print("=" * 65)
     return net
 
 
-# ═══════════════════════════════════════════════════════════
 # 4. SOLVERS
-# ═══════════════════════════════════════════════════════════
 
 def greedy_solve(net, state, max_steps=30):
     """Greedy: always pick the move with lowest predicted value."""
@@ -401,9 +388,7 @@ def beam_solve(net, state, beam_width=64, max_steps=20):
     return None
 
 
-# ═══════════════════════════════════════════════════════════
 # 5. TESTING & DEMOS
-# ═══════════════════════════════════════════════════════════
 
 def test_agent(net, num_tests=50, max_depth=12, max_steps=25):
     """Test on random scrambles, report solve rates and move counts."""
@@ -411,9 +396,7 @@ def test_agent(net, num_tests=50, max_depth=12, max_steps=25):
     
     for method_name, solver in [("Greedy", lambda s: greedy_solve(net, s, max_steps)),
                                  ("Beam Search (w=128)", lambda s: beam_solve(net, s, 128, max_steps))]:
-        print("\n" + "=" * 65)
         print(f"  TESTING: {method_name}")
-        print("=" * 65)
         
         total_solved = 0
         total_tests = 0
@@ -449,9 +432,7 @@ def demo_solves(net, n=12, scramble_depth=6, use_beam=False, beam_w=128):
     rng = np.random.default_rng(77)
     method = f"Beam(w={beam_w})" if use_beam else "Greedy"
     
-    print("\n" + "=" * 65)
     print(f"  DEMO: {method} — {n} cubes, scramble depth {scramble_depth}")
-    print("=" * 65)
     
     solved_moves = []
     
@@ -475,12 +456,9 @@ def demo_solves(net, n=12, scramble_depth=6, use_beam=False, beam_w=128):
         print(f"\n  Results: {len(solved_moves)}/{n} solved | "
               f"Avg={np.mean(solved_moves):.1f} | "
               f"Min={min(solved_moves)} | Max={max(solved_moves)} moves")
-    print("=" * 65)
 
 
-# ═══════════════════════════════════════════════════════════
 # 6. MAIN
-# ═══════════════════════════════════════════════════════════
 
 def main():
     print()
