@@ -1,13 +1,11 @@
 """
 2x2x2 Rubik's Cube Solver using Reinforcement Learning
 ========================================================
-Uses Autodidactic Iteration (ADI). The same family of algorithms
-as DeepCubeA, but adapted for a 2x2x2 cube with a pure-numpy neural net.
+Uses Autodidactic Iteration (ADI). The same family of algorithms as DeepCubeA, but adapted for a 2x2x2 cube with a pure-numpy neural net.
 
 How it works:
   1. Generate training states by scrambling from SOLVED state
-  2. For each state, compute target value = 1 + min(value(child)) over all moves
-     (the solved state has value 0)
+  2. For each state, compute target value = 1 + min(value(child)) over all moves (the solved state has value 0)
   3. Train a neural network to predict this value function
   4. At solve time, greedily pick moves that minimize predicted distance
 
@@ -456,9 +454,6 @@ def demo_solves(net, n=12, scramble_depth=6, use_beam=False, beam_w=128):
         print(f"\n  Results: {len(solved_moves)}/{n} solved | "
               f"Avg={np.mean(solved_moves):.1f} | "
               f"Min={min(solved_moves)} | Max={max(solved_moves)} moves")
-
-
-# 6. MAIN
 
 def main():
     print()
